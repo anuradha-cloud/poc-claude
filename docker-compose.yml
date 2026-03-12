@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NGROK_API_HOST=ngrok
+    depends_on:
+      - ngrok
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    # Tunnel to the app container on the docker-compose network
+    command: http app:3000
+    env_file:
+      - .env
+    ports:
+      - "4040:4040"

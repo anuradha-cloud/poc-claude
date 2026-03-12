@@ -1,0 +1,21 @@
+{
+  "name": "claude-ecs-app",
+  "version": "1.0.0",
+  "description": "Simple Node.js app using Anthropic Claude SDK, deployed on AWS ECS with ngrok tunnel",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@modelcontextprotocol/sdk": "1.0.0",
+    "eventsource": "^1.1.2",
+    "dotenv": "^17.3.1",
+    "express": "^4.21.2",
+    "openai": "^6.25.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

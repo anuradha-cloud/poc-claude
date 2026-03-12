@@ -1,0 +1,65 @@
+{
+  "family": "claude-ecs-app",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "{{ACCOUNT_ID}}.dkr.ecr.{{REGION}}.amazonaws.com/claude-ecs-app:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "PORT", "value": "3000" }
+      ],
+      "secrets": [
+        {
+          "name": "ANTHROPIC_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:{{REGION}}:{{ACCOUNT_ID}}:secret:claude-ecs-app/ANTHROPIC_API_KEY"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/claude-ecs-app",
+          "awslogs-region": "{{REGION}}",
+          "awslogs-stream-prefix": "app"
+        }
+      }
+    },
+    {
+      "name": "ngrok",
+      "image": "ngrok/ngrok:latest",
+      "essential": false,
+      "command": ["http", "localhost:3000"],
+      "secrets": [
+        {
+          "name": "NGROK_AUTHTOKEN",
+          "valueFrom": "arn:aws:secretsmanager:{{REGION}}:{{ACCOUNT_ID}}:secret:claude-ecs-app/NGROK_AUTHTOKEN"
+        }
+      ],
+      "portMappings": [
+        {
+          "containerPort": 4040,
+          "protocol": "tcp"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/claude-ecs-app",
+          "awslogs-region": "{{REGION}}",
+          "awslogs-stream-prefix": "ngrok"
+        }
+      }
+    }
+  ]
+}
